@@ -98,3 +98,54 @@ class Tool:
         y = torch.matmul(X, w) + b
         y += torch.normal(0, std, y.shape)
         return X, y.reshape((-1, 1))
+
+class Algorithm:
+    class Loss:
+        def squared_loss(y_hat, y):
+            """均方损失"""
+            return (y_hat - y.reshape(y_hat.shape)) ** 2 / 2
+        
+    
+    class Optimize:
+        def sgd(params, lr, batch_size): 
+            """小批量随机梯度下降"""
+            with torch.no_grad():
+                for param in params:
+                    param -= lr * param.grad / batch_size
+                    param.grad.zero_()
+
+class Data:
+    class FashionMNIST:
+        def load_data_fashion_mnist(batch_size, resize=None):  
+            """下载Fashion-MNIST数据集，然后将其加载到内存中"""
+            trans = [transforms.ToTensor()]  
+            if resize:
+                trans.insert(0, transforms.Resize(resize))
+            trans = transforms.Compose(trans)
+            mnist_train = torchvision.datasets.FashionMNIST(
+                root="../data", train=True, transform=trans, download=True)
+            mnist_test = torchvision.datasets.FashionMNIST(
+                root="../data", train=False, transform=trans, download=True)
+            return (data.DataLoader(mnist_train, batch_size, shuffle=True,
+                                    num_workers=4),
+                    data.DataLoader(mnist_test, batch_size, shuffle=False,
+                                    num_workers=4))
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
